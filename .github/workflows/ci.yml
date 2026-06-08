@@ -28,7 +28,7 @@ jobs:
       - name: Build Docker Image
         run: |
           mlflow models build-docker \
-            -m "runs:/4e8daac8bcc24f49bf10038a4fafe69b/model" \
+            -m "runs:/6e97bfd407b74830b4477c4d6be75941/model" \
             -n credit-scoring-api
 
       - name: Login Docker Hub
