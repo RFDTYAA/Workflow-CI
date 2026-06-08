@@ -28,16 +28,20 @@ jobs:
       - name: Build Docker Image
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          MLFLOW_TRACKING_URI: https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow
         run: |
           python -c "
           import os
           import dagshub
+          import mlflow.models
+
           dagshub.auth.add_app_token(os.getenv('DAGSHUB_TOKEN'))
+          dagshub.init(repo_owner='RFDTYAA', repo_name='credit-scoring-mlops', mlflow=True)
+
+          mlflow.models.build_docker(
+              model_uri='runs:/6e97bfd407b74830b4477c4d6be75941/model',
+              name='credit-scoring-api'
+          )
           "
-          mlflow models build-docker \
-            -m "runs:/6e97bfd407b74830b4477c4d6be75941/model" \
-            -n credit-scoring-api
 
       - name: Login Docker Hub
         uses: docker/login-action@v3
