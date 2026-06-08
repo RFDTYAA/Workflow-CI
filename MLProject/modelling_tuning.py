@@ -3,12 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import mlflow
+import os
 import dagshub
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 
-dagshub.init(repo_owner="RFDTYAA", repo_name="credit-scoring-mlops", mlflow=True)
+dagshub.init(
+    repo_owner="RFDTYAA",
+    repo_name="credit-scoring-mlops",
+    mlflow=True,
+    token=os.getenv("DAGSHUB_TOKEN")
+)
 
 mlflow.set_experiment("Credit_Scoring_Advanced_RafiAditya")
 
