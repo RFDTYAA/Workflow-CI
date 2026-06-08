@@ -9,14 +9,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 
-dagshub.auth.add_app_token(os.getenv("DAGSHUB_TOKEN"))
+os.environ["DAGSHUB_TOKEN"] = os.getenv("DAGSHUB_TOKEN")
 
 dagshub.init(
     repo_owner="RFDTYAA",
     repo_name="credit-scoring-mlops",
     mlflow=True
 )
-
 mlflow.set_experiment("Credit_Scoring_Advanced_RafiAditya")
 
 with mlflow.start_run(run_name="RandomForest_Advanced_CI"):
