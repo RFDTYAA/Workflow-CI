@@ -1,9 +1,5 @@
 # 💳 Credit Scoring MLOps - German Credit Dataset
 
-[![MLflow](https://shields.io)](https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow)
-[![DagsHub](https://shields.io)](https://dagshub.com/RFDTYAA/credit-scoring-mlops)
-[![CI Pipeline](https://github.com)](https://github.com)
-
 Proyek ini adalah submission akhir untuk mata kuliah **Membangun Sistem Machine Learning** (Dicoding). Fokus utama proyek ini adalah menerapkan prinsip **MLOps** dalam membangun pipeline machine learning yang _end-to-end_ dan terotomatisasi.
 
 ## 🎯 Tujuan Proyek
