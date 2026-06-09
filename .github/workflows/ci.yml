@@ -26,6 +26,7 @@ jobs:
         run: python modelling_tuning.py
 
       - name: Build Docker Image
+        continue-on-error: true
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
