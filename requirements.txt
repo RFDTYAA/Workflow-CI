@@ -1,4 +1,4 @@
-mlflow==2.21.0
+mlflow>=2.20.0
 dagshub
 scikit-learn
 pandas
