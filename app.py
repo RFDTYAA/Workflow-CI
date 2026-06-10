@@ -14,22 +14,31 @@ dagshub.init(
 
 app = FastAPI(
     title="Credit Scoring API",
-    description="API untuk prediksi credit scoring menggunakan model yang dilatih di DagsHub MLflow",
+    description="API untuk prediksi credit scoring",
     version="1.0.0"
 )
 
-MODEL_URI = os.getenv(
-    "MODEL_URI", 
-    "runs:/691f9216291f4642ada774c006d7642a/model"
-)
+def get_latest_model():
+    client = mlflow.tracking.MlflowClient()
+    experiment = client.get_experiment_by_name("Credit_Scoring_Advanced_RafiAditya")
+    if experiment is None:
+        return None
+    runs = client.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        filter_string="attributes.status = 'FINISHED'",
+        order_by=["start_time DESC"],
+        max_results=10
+    )
+    for run in runs:
+        if "model" in run.data.artifacts:
+            return mlflow.pyfunc.load_model(f"runs:/{run.info.run_id}/model")
+    return None
 
-try:
-    model = mlflow.pyfunc.load_model(MODEL_URI)
-    print(f"✅ Model berhasil dimuat dari: {MODEL_URI}")
-except Exception as e:
-    print(f"❌ Gagal memuat model: {e}")
-    model = None
-
+model = get_latest_model()
+if model:
+    print("✅ Model berhasil dimuat (latest dari DagsHub)")
+else:
+    print("⚠️ Model belum ditemukan, cek DagsHub Experiments")
 
 class CreditData(BaseModel):
     checking_status: float
@@ -53,37 +62,46 @@ class CreditData(BaseModel):
     own_telephone: float
     foreign_worker: float
 
-
 @app.get("/")
 def root():
-    return {
-        "message": "Credit Scoring API is running",
-        "model_uri": MODEL_URI
-    }
+    return {"message": "Credit Scoring API running", "status": "ok"}
 
+@app.get("/health")
+def health():
+    return {"status": "healthy", "model_loaded": model is not None}
 
 @app.post(
     "/predict",
     responses={
-        200: {"description": "Prediction successful"},
-        400: {"description": "Invalid input data"},
-        500: {"description": "Model failed to load or internal server error"}
+        200: {
+            "description": "Prediksi berhasil",
+            "content": {
+                "application/json": {
+                    "example": {"prediction": 1, "label": "good"}
+                }
+            }
+        },
+        503: {
+            "description": "Model belum dimuat / tidak tersedia"
+        },
+        400: {
+            "description": "Input tidak valid atau terjadi error saat prediksi"
+        }
     }
 )
-def predict(data: CreditData) -> Dict[str, Any]:
+def predict(data: CreditData):
     if model is None:
         raise HTTPException(
-            status_code=500, 
-            detail="Model belum berhasil dimuat"
+            status_code=503, 
+            detail="Model belum siap"
         )
-
     try:
         input_df = pd.DataFrame([data.dict()])
         prediction = model.predict(input_df)
 
         return {
             "prediction": int(prediction[0]),
-            "message": "good" if prediction[0] == 1 else "bad"
+            "label": "good" if prediction[0] == 1 else "bad"
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
