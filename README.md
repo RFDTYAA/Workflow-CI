@@ -1,22 +1,32 @@
-# 💳 Credit Scoring MLOps - German Credit Dataset
+# 💳 Credit Scoring - CI/CD & Monitoring - German Credit Dataset
 
-Proyek ini adalah submission akhir untuk mata kuliah **Membangun Sistem Machine Learning** (Dicoding). Fokus utama proyek ini adalah menerapkan prinsip **MLOps** dalam membangun pipeline machine learning yang _end-to-end_ dan terotomatisasi.
+Repository ini merupakan proyek _submission_ akhir untuk mata kuliah **Membangun Sistem Machine Learning** (Dicoding). Fokus utama proyek ini adalah menerapkan prinsip **MLOps** dalam membangun pipeline _machine learning_ yang _end-to-end_ dan terotomatisasi.
+
+**Fitur Utama & Cakupan Proyek:**
+
+- **Dataset:** Menggunakan _German Credit Dataset_ untuk kasus _Credit Scoring_.
+- **Continuous Integration (CI):** Otomatisasi pengujian kode dan integrasi pipeline.
+- **Monitoring:** Sistem pemantauan performa model secara berkala saat berjalan.
 
 ## 🎯 Tujuan Proyek
 
-Membangun sistem prediksi _credit scoring_ yang handal menggunakan dataset **German Credit** dengan implementasi:
+Membangun sistem prediksi _credit scoring_ yang handal dengan implementasi:
 
-- Experiment tracking menggunakan **MLflow** yang di-host di **DagsHub**
-- Continuous Integration (CI) menggunakan **GitHub Actions**
-- Automated model training + Docker image build & push ke **Docker Hub**
+- **Experiment Tracking:** Manajemen eksperimen menggunakan **MLflow** yang di-host di **DagsHub**.
+- **Continuous Integration (CI):** Otomatisasi pengujian kode dan integrasi pipeline menggunakan **GitHub Actions**.
+- **Automated Deployment:** Proses _automated model training_ serta _Docker image build & push_ ke **Docker Hub**.
 
 ## 🛠️ Fitur Utama
 
-- Automated data preprocessing
-- Hyperparameter tuning menggunakan `GridSearchCV`
-- Manual logging ke MLflow (parameter, metrik, dan artifact)
-- Continuous Integration yang menjalankan training otomatis
-- Docker image otomatis di-build dan di-push ke Docker Hub via GitHub Actions
+- **Automated Pipeline:** Proses _data preprocessing_ dan _hyperparameter tuning_ (menggunakan `GridSearchCV`) yang berjalan otomatis.
+- **Experiment Logging:** Pencatatan manual parameter, metrik, dan _artifact_ ke MLflow.
+- **CI Pipeline (GitHub Actions):** Menjalankan _training_ otomatis, melakukan pengujian kode, serta melakukan _build & push_ Docker image secara otomatis ke Docker Hub.
+- **Model Inference:** Penyediaan API untuk prediksi real-time menggunakan **FastAPI** dan **MLflow**.
+- **Monitoring Stack:**
+  - **Prometheus:** Pengumpulan metrik performa sistem dan model (_metrics collection_).
+  - **Grafana:** Visualisasi data dan _dashboard_ pemantauan yang interaktif.
+- **Alerting System:** Dilengkapi dengan 3 _alert rules_ untuk mendeteksi anomali atau penurunan performa sistem.
+- **Containerized Deployment:** Seluruh layanan dibungkus dan dijalankan dengan mudah menggunakan **Docker Compose**.
 
 ## 📁 Struktur Proyek
 
@@ -27,45 +37,61 @@ Workflow-CI/
 ├── MLProject/
 │   ├── modelling_tuning.py
 │   ├── requirements.txt
+│   ├── preprocessor.pkl
 │   └── German-Credit-Dataset/
 │       ├── german_credit_train_preprocessed.csv
 │       └── german_credit_test_preprocessed.csv
+├── docker-compose.yml
 ├── Dockerfile
-├── app.py
+├── inference.py
+├── prometheus.yml
 ├── requirements.txt
-└── README.md (opsional)
+└── README.md
 ```
 
-## 🚀 Memulai (Getting Started)
+## 🚀 Cara Menjalankan
 
-### 1. Eksekusi Lokal
-
-Pastikan Anda memiliki Python 3.x, lalu jalankan perintah berikut:
+### 1. Jalankan Monitoring Stack
 
 ```bash
-cd MLProject
-pip install -r requirements.txt
-python modelling_tuning.py
+docker compose up --build -d
 ```
 
-### 2. Automasi via GitHub Actions
+**Akses:**
 
-Pipeline ini sudah dikonfigurasi untuk berjalan otomatis. Cukup lakukan:
+- **Inference API:** http://localhost:8000/docs
+- **Prometheus:** http://localhost:9090
+- **Grafana:** http://localhost:3000 (admin/admin)
 
-1. `git add .`
-2. `git commit -m "Update model logic"`
-3. `git push origin main`
-   _Workflow akan mentrigger training otomatis dan mengirimkan hasilnya ke DagsHub, dilanjutkan dengan proses build serta push Docker image ke Docker Hub._
+### 2. Dashboard Grafana
 
-## 📦 Docker Image
+Dashboard sudah dibuat dengan **10 panel** yang mencakup:
 
-Artifact berupa Docker image dari pipeline CI terupdate saat ini sudah tersedia secara publik pada tautan Docker Hub berikut:
-👉 **[Docker Image Repository](https://hub.docker.com/repository/docker/rfdtyaaa/credit-scoring-api/general)**
+- HTTP Request Rate
+- Prediction Performance (Good vs Bad)
+- Prediction Latency (p95)
+- Error Rate
+- Active Requests
+- Model Load Status
+- Requests by Endpoint
 
-## 📊 Hasil Eksperimen
+---
 
-Hasil tracking, perbandingan metrik, dan model artifact dapat diakses secara publik melalui dashboard berikut:
-👉 **[DagsHub MLflow Dashboard](https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow)**
+## 🔔 Alert Rules
+
+Terdapat 3 alert rules yang telah dikonfigurasi:
+
+| Alert Name              | Kondisi                  | Severity |
+| :---------------------- | :----------------------- | :------- |
+| Model Down              | `model_load_status == 0` | Critical |
+| High 5xx Error Rate     | Error 5xx muncul         | Warning  |
+| High Prediction Latency | p95 latency > 1 detik    | Warning  |
+
+---
+
+## 📊 Monitoring
+
+Semua metrik diekspos melalui endpoint `/metrics` pada service inference dan discrape oleh Prometheus.
 
 ---
 
