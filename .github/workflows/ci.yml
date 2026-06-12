@@ -26,8 +26,9 @@ jobs:
       - name: Run MLflow Project
         working-directory: ./MLProject
         env:
-          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           MLFLOW_TRACKING_URI: https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow
+          MLFLOW_TRACKING_USERNAME: RFDTYAA
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: mlflow run . --env-manager local
 
       - name: Setup Docker Buildx
