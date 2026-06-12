@@ -23,6 +23,12 @@ jobs:
           pip install --upgrade pip
           pip install mlflow==2.19.0 dagshub
 
+      - name: Initialize Conda
+        run: |
+          source /usr/share/miniconda/etc/profile.d/conda.sh
+          conda init bash
+          source ~/.bashrc
+
       - name: Run MLflow Project
         working-directory: ./MLProject
         env:
