@@ -1,0 +1,9 @@
+name: Credit-Scoring-Basic
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      tracking_uri: {type: string, default: "https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow"}
+    command: "python modelling_tuning.py"

@@ -18,17 +18,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install training dependencies
-        working-directory: ./MLProject
+      - name: Install MLflow
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install mlflow==2.19.0 dagshub
 
-      - name: Run training
+      - name: Run MLflow Project
         working-directory: ./MLProject
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        run: python modelling_tuning.py
+          MLFLOW_TRACKING_URI: https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow
+        run: mlflow run . --env-manager local
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
