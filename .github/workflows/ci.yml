@@ -13,21 +13,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
           python-version: "3.12"
+          activate-environment: mlflow-env
+          use-mamba: true
 
       - name: Install MLflow
         run: |
           pip install --upgrade pip
           pip install mlflow==2.19.0 dagshub
-
-      - name: Initialize Conda
-        run: |
-          source /usr/share/miniconda/etc/profile.d/conda.sh
-          conda init bash
-          source ~/.bashrc
 
       - name: Run MLflow Project
         working-directory: ./MLProject
