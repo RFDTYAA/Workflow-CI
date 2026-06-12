@@ -28,6 +28,7 @@ jobs:
           pip install mlflow==2.19.0 dagshub
 
       - name: Run MLflow Project
+        shell: bash -l {0}
         working-directory: ./MLProject
         env:
           MLFLOW_TRACKING_URI: https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow
