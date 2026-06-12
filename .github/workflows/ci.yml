@@ -29,7 +29,7 @@ jobs:
           MLFLOW_TRACKING_URI: https://dagshub.com/RFDTYAA/credit-scoring-mlops.mlflow
           MLFLOW_TRACKING_USERNAME: RFDTYAA
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-        run: mlflow run . --env-manager local
+        run: mlflow run .
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
